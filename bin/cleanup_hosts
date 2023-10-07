@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Define the list of IPs whose keys you want to remove from known_hosts
+declare -a IPS=("192.168.1.60" "192.168.1.61" "192.168.1.62")
+
+# Loop through each IP and remove its entry from known_hosts
+for ip in "${IPS[@]}"; do
+  ssh-keygen -R "$ip"
+done

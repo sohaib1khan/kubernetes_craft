@@ -1,0 +1,9 @@
+---
+- name: Update and Cleanup Systems
+  hosts: all
+  become: yes
+  tasks:
+    # - name: Update 
+    #   shell: sudo apt update && sudo apt upgrade -y
+    - name: Reboot the system
+      shell: sudo reboot

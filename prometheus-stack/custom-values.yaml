@@ -1,0 +1,9 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+  
+  service:
+    type: LoadBalancer
+
+grafana:
+  enabled: false

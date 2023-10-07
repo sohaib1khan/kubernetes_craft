@@ -1,0 +1,93 @@
+---
+- name: Setup Kubernetes Cluster
+  hosts: all
+  become: yes
+  tasks:
+    - name: Transfer update_system script to the remote host
+      copy:
+        src: ./bin/update_system.sh
+        dest: /tmp/update_system.sh
+        mode: '0755'
+
+    - name: Execute update_system script on the remote host
+      command: bash /tmp/update_system.sh
+
+    - name: Transfer install_docker script to the remote host
+      copy:
+        src: ./bin/install_docker.sh
+        dest: /tmp/install_docker.sh
+        mode: '0755'
+
+    - name: Execute install_docker script on the remote host
+      command: bash /tmp/install_docker.sh
+
+    - name: Transfer setup_kubernetes_repo script to the remote host
+      copy:
+        src: ./bin/setup_kubernetes_repo.sh
+        dest: /tmp/setup_kubernetes_repo.sh
+        mode: '0755'
+
+    - name: Execute setup_kubernetes_repo script on the remote host
+      command: bash /tmp/setup_kubernetes_repo.sh
+
+    - name: Transfer install_kubernetes_components script to the remote host
+      copy:
+        src: ./bin/install_kubernetes_components.sh
+        dest: /tmp/install_kubernetes_components.sh
+        mode: '0755'
+
+    - name: Execute install_kubernetes_components script on the remote host
+      command: bash /tmp/install_kubernetes_components.sh
+
+- name: Initialize Kubernetes Master
+  hosts: masters
+  become: yes
+  tasks:
+    - name: Transfer initialize_kubernetes_master script to the remote host
+      copy:
+        src: ./bin/initialize_kubernetes_master.sh
+        dest: /tmp/initialize_kubernetes_master.sh
+        mode: '0755'
+
+    - name: Initialize master node
+      command: bash /tmp/initialize_kubernetes_master.sh
+      register: init_output
+
+    - name: Extract kubeadm join command
+      set_fact:
+        join_command: "{{ init_output.stdout_lines | select('search', 'kubeadm join') | first }}"
+
+    - name: Display kubeadm join command
+      debug:
+        msg: "{{ init_output.stdout_lines }}"
+
+    - name: Transfer setup_kubeconfig script to the remote host
+      copy:
+        src: ./bin/setup_kubeconfig.sh
+        dest: /tmp/setup_kubeconfig.sh
+        mode: '0755'
+
+    - name: Execute setup_kubeconfig script on the remote host
+      command: bash /tmp/setup_kubeconfig.sh
+
+    - name: Transfer setup_pod_network script to the remote host
+      copy:
+        src: ./bin/setup_pod_network.sh
+        dest: /tmp/setup_pod_network.sh
+        mode: '0755'
+
+    - name: Execute setup_pod_network script on the remote host
+      command: bash /tmp/setup_pod_network.sh
+
+- name: Verify Cluster is Up
+  hosts: masters
+  become: yes
+  tasks:
+    - name: Transfer verify_cluster script to the remote host
+      copy:
+        src: ./bin/verify_cluster.sh
+        dest: /tmp/verify_cluster.sh
+        mode: '0755'
+    - name: Execute verify_cluster script on the remote host
+      command: bash /tmp/verify_cluster.sh
+   
