@@ -1,5 +1,7 @@
 # Creating Kubernetes Secrets for Private Docker Registries
 
+If you're deploying containers from images stored in a private registry, Kubernetes will need authentication credentials to pull them. This guide demonstrates how to create a Kubernetes secret for this purpose.
+
 ## Prerequisites:
 
 1.  Ensure `kubectl` is configured correctly and is able to communicate with your cluster.
