@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pihole-update-gravity
+  namespace: pihole
+spec:
+  schedule: "0 20 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: pihole-update-gravity
+            image: pihole/pihole:latest
+            command:
+              - /bin/sh
+              - -c
+              - |
+                POD_NAME=$(kubectl get pods -n pihole -l app=pihole -o jsonpath="{.items[0].metadata.name}")
+                kubectl exec -n pihole $POD_NAME -- pihole -g
+                if [ $? -eq 0 ]; then
+                  curl "https:GOTIFY_SERVER_LINK/message?token=TOKEN" -F "title=Pi-Hole Update" -F "message= Pi-Hole Gravity update was successful" -F "priority=10"
+                else
+                  curl "https:GOTIFY_SERVER_LINK/message?token=TOKEN" -F "title=Pi-Hole Update" -F "message= Pi-Hole Gravity update failed" -F "priority=10"
+                fi
+          restartPolicy: OnFailure
