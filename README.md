@@ -16,5 +16,8 @@ Kubernetes has quickly become the go-to for container orchestration, and this re
 
 Every folder or file here represents a step in my Kubernetes learning journey. Each has its own significance, be it a triumph over a particularly challenging setup or a simple note-to-self about a newfound Kubernetes feature.
 
+I want to add, I do keep a secondary or more detailed Wiki/Playbook page that offer guides/notes. Sadly this is running off of my home network which is 99.99% of the time is up. 
+Visit: https://read.helixx.cloud/
+
 
 Happy Kubernetes-ing!
