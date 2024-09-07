@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashlink-deployment
+  namespace: dashlink  # Ensure you're in the right namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashlink
+  template:
+    metadata:
+      labels:
+        app: dashlink
+    spec:
+      containers:
+      - name: dashlink
+        image: DOCKER_IMG_REGISTRY/dashlink  # Image from docker image  registry
+        ports:
+        - containerPort: 5021
+        volumeMounts:
+        - name: dashlink-data
+          mountPath: /app/data
+      volumes:
+      - name: dashlink-data
+        hostPath:
+          path: /home/k8server/dashlink
+          type: Directory
+      imagePullSecrets:
+      - name: regcred  # Reference the Docker registry secret here
