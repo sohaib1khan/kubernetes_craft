@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Monthly Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Edit Monthly Data for {{ month }}</h1>
+
+    <form action="{{ url_for('edit_month', month=month) }}" method="POST">
+        <label for="goal">Goal:</label>
+        <input type="text" name="goal" value="{{ details['goal'] }}" required>
+
+        <label for="result">Result:</label>
+        <input type="text" name="result" value="{{ details['result'] }}" required>
+
+        <label for="date">Date:</label>
+        <input type="date" name="date" value="{{ details['date'] }}" required>
+
+        <label for="balance">Balance:</label>
+        <input type="text" name="balance" value="{{ details['balance'] }}" required>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="{{ url_for('index') }}"><button type="button">Cancel</button></a>
+</body>
+</html>

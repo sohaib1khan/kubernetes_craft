@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Expense Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Edit Expense Data for {{ category }}</h1>
+
+    <form action="{{ url_for('edit_expense', category=category) }}" method="POST">
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount" value="{{ amount }}" required>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="{{ url_for('index') }}"><button type="button">Cancel</button></a>
+</body>
+</html>

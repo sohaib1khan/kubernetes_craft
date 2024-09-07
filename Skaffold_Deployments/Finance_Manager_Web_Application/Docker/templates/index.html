@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Manager</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="content-container">
+        <h1>Monthly Finance Management</h1>
+
+        <!-- Add Logout Button -->
+        <div class="logout-container">
+            <a href="{{ url_for('logout_view') }}"><button type="button" class="logout-btn">Logout</button></a>
+        </div>
+
+        <!-- Monthly Goal and Result Form -->
+        <form action="/update" method="POST" class="form-container">
+            <h2>Update Monthly Data</h2>
+            <label for="month">Month:</label>
+            <input type="text" name="month" required>
+
+            <label for="goal">Goal:</label>
+            <input type="text" name="goal">
+
+            <label for="result">Result:</label>
+            <input type="text" name="result">
+
+            <label for="date">Date:</label>
+            <input type="date" name="date">
+
+            <label for="balance">Balance:</label>
+            <input type="text" name="balance">
+
+            <button type="submit">Update</button>
+        </form>
+
+        <!-- Monthly Goals & Results -->
+        <h3>Monthly Goals & Results</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Goal</th>
+                        <th>Result</th>
+                        <th>Date</th>
+                        <th>Balance</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for month, details in data['months'].items() %}
+                    <tr>
+                        <td>{{ month }}</td>
+                        <td>{{ details['goal'] }}</td>
+                        <td>{{ details['result'] }}</td>
+                        <td>{{ details['date'] }}</td>
+                        <td>{{ details['balance'] }}</td>
+                        <td>
+                            <form action="{{ url_for('remove_month', month=month) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                            <a href="{{ url_for('edit_month', month=month) }}" style="display:inline;">
+                                <button type="button" class="edit-btn">Edit</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Expense Form -->
+        <form action="/add_expense" method="POST" class="form-container">
+            <h2>Add New Expense</h2>
+            <label for="category">Category:</label>
+            <input type="text" name="category" required>
+
+            <label for="amount">Amount:</label>
+            <input type="number" name="amount" required>
+
+            <button type="submit">Add Expense</button>
+        </form>
+
+        <!-- Expenses -->
+        <h3>Expenses</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category, amount in data['expenses'].items() %}
+                    <tr>
+                        <td>{{ category }}</td>
+                        <td>{{ amount }}</td>
+                        <td>
+                            <form action="{{ url_for('remove_expense', category=category) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                            <a href="{{ url_for('edit_expense', category=category) }}" style="display:inline;">
+                                <button type="button" class="edit-btn">Edit</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

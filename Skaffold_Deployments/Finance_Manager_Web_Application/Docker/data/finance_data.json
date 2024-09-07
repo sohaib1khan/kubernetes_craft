@@ -1,0 +1,71 @@
+{
+    "months": {
+        "Feb": {
+            "goal": "Pay off credit card",
+            "result": "Paid off $300",
+            "date": "2024-02-26",
+            "balance": "1300.023"
+        },
+        "Apr": {
+            "goal": "Save $400",
+            "result": "Saved $450",
+            "date": "2024-04-30",
+            "balance": "1500.00"
+        },
+        "May": {
+            "goal": "Pay off car loan",
+            "result": "Paid off $500",
+            "date": "2024-05-31",
+            "balance": "1000.00"
+        },
+        "Jun": {
+            "goal": "Save $300",
+            "result": "Saved $350",
+            "date": "2024-06-30",
+            "balance": "1350.00"
+        },
+        "Jul": {
+            "goal": "Vacation savings",
+            "result": "Saved $400",
+            "date": "2024-07-31",
+            "balance": "1750.00"
+        },
+        "Aug": {
+            "goal": "Emergency fund $500",
+            "result": "Saved $550",
+            "date": "2024-08-31",
+            "balance": "2300.00"
+        },
+        "Sep": {
+            "goal": "Invest $300",
+            "result": "Invested $320",
+            "date": "2024-09-30",
+            "balance": "1980.00"
+        },
+        "Oct": {
+            "goal": "Save for holidays",
+            "result": "Saved $600",
+            "date": "2024-10-31",
+            "balance": "2580.00"
+        },
+        "Jan": {
+            "goal": "Pay off credit card\t",
+            "result": "Paid off $9000",
+            "date": "2024-09-04",
+            "balance": "1300.02"
+        }
+    },
+    "expenses": {
+        "Housing": "1410.00",
+        "Internet": "70.00",
+        "Phone": "90.00",
+        "Credit Card": "1500.00",
+        "CarWash": "30.00",
+        "Groceries": "400.00",
+        "Utilities": "200.00",
+        "Gym Membership": "50.00",
+        "Dining Out": "150.00",
+        "Entertainment": "100.00",
+        "apps": "34"
+    }
+}

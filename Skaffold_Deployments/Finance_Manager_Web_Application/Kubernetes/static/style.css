@@ -1,0 +1,83 @@
+/* Add background northern light animation */
+body {
+    h1 {
+        color: white;
+        text-align: center;
+    }    
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 20px;
+    background: linear-gradient(120deg, rgba(9, 77, 72, 0.9), rgba(12, 107, 28, 0.8), rgba(25, 173, 5, 0.8));
+    background-size: 400% 400%;
+    animation: northernLight 10s ease infinite;
+}
+
+@keyframes northernLight {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+h1, h2, h3 {
+    color: white;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+/* Scrollable Table */
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    background-color: rgba(145, 137, 137, 0.527);
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #333;
+    color: rgb(31, 30, 30);
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #f02e0b;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button[type="submit"] {
+    background-color: #f44336;
+}
+
+button[type="submit"]:hover {
+    background-color: #d32f2f;
+}

@@ -1,0 +1,17 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: money-app
+build:
+  local:
+    push: true  # Enable pushing images to a remote repository
+  artifacts:
+    - image: Docker_Registry_money_app  # No tag here, Skaffold will handle tagging
+      context: .
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+      - k8s/deployment.yaml
+      - k8s/service.yaml

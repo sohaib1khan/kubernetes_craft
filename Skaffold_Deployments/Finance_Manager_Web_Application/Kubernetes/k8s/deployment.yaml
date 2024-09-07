@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: money-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: money-app
+  template:
+    metadata:
+      labels:
+        app: money-app
+    spec:
+      containers:
+        - name: money-app
+          image: #dockerhub_username/money_app:latest
+          ports:
+            - containerPort: 5025
+          volumeMounts:
+            - mountPath: /app/data
+              name: data-volume
+          env:
+            - name: FLASK_ENV
+              value: development
+            - name: FLASK_APP
+              value: app.py
+      volumes:
+        - name: data-volume
+          hostPath:
+            path: /Path/TO/Data  #path_to_data_folder
+      imagePullSecrets:
+        - name: regcred  # Refer to the image pull secret created from docker registry to pull image from private registry
