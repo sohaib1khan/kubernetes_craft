@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-parser
+  namespace: log-parser  # Use the created namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-parser
+  template:
+    metadata:
+      labels:
+        app: log-parser
+    spec:
+      containers:
+      - name: log-parser
+        image: your-registry-url/log-parser  # Image to be used for deployment
+        ports:
+        - containerPort: 5009
+        volumeMounts:
+        - mountPath: /app/data    # Mount to /app/data for data persistence
+          name: data-volume
+        env:
+        - name: FLASK_ENV
+          value: development
+        - name: FLASK_APP
+          value: app.py
+      volumes:
+      - name: data-volume
+        hostPath:
+          path: /your/data/path  # Path to data directory on the host machine
+      imagePullSecrets:
+      - name: regcred  # Secret for pulling the image from the private registry

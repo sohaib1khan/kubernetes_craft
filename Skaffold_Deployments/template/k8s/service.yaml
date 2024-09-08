@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: log-parser
+  namespace: log-parser  # Use the created namespace
+spec:
+  type: LoadBalancer 
+  selector:
+    app: log-parser
+  ports:
+    - port: 5009        # The port exposed by the service
+      targetPort: 5009  # The port on the container
+      protocol: TCP
