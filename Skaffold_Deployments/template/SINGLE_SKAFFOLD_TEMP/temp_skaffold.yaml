@@ -1,0 +1,25 @@
+# Skaffold configuration file for deploying Nextcloud on Kubernetes
+# This template is designed for a scenario where no custom images are built,
+# but the build section can be uncommented and customized if needed.
+
+apiVersion: skaffold/v2beta29  # Version of Skaffold API used
+kind: Config                   # The kind of configuration, here it's a Config file
+metadata:
+  name: nextcloud-k8s           # Name of the Skaffold project (can be changed)
+
+# Uncomment and configure the build section below if you need to build custom images
+# For example, if you want to build Nextcloud or another app's image using a Dockerfile.
+# build:
+#   artifacts:
+#   - image: nextcloud          # The image name that would be built
+#     context: .                # Context directory for building the Docker image
+#     docker:
+#       dockerfile: Dockerfile  # Path to the Dockerfile (relative to the context)
+
+deploy:
+  kubectl:
+    # The manifests section specifies the Kubernetes YAML files that define your app's components
+    manifests:
+      - ./k8s/deployment.yaml        # Manifest for the Nextcloud deployment
+      - ./k8s/maria_deployment.yaml  # Manifest for the MariaDB deployment (or any other DB)
+      - ./k8s/volume.yaml            # Persistent volume definition for Nextcloud data
