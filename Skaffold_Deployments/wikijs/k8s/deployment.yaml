@@ -1,0 +1,129 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wikijs-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "<your-host-path-here>"  # Correct path
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""  # Explicitly setting no storage class
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wikijs-pvc
+  namespace: wikijs  # Make sure you are using the right namespace
+spec:
+  volumeName: wikijs-pv  # Explicitly bind to the manually defined PV
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""  # Match no storage class if PV doesn't use one
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db  # Adding PostgreSQL service
+  namespace: wikijs  # Make sure the namespace is correct
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: db  # Matches the PostgreSQL deployment selector
+  clusterIP: None  # This enables internal DNS resolution for headless service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: wikijs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11-alpine
+          env:
+            - name: POSTGRES_DB
+              value: "<your-db-name-here>"
+            - name: POSTGRES_USER
+              value: "<your-db-user-here>"
+            - name: POSTGRES_PASSWORD
+              value: "<your-db-password-here>"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: wikijs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki
+  namespace: wikijs
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: wiki
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki
+  namespace: wikijs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wiki
+  template:
+    metadata:
+      labels:
+        app: wiki
+    spec:
+      containers:
+        - name: wiki
+          image: ghcr.io/requarks/wiki:2
+          securityContext:
+            runAsUser: 0  # Run as root
+          env:
+            - name: DB_TYPE
+              value: "postgres"
+            - name: DB_HOST
+              value: "db"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "<your-db-user-here>"
+            - name: DB_PASS
+              value: "<your-db-password-here>"
+            - name: DB_NAME
+              value: "<your-db-name-here>"
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - mountPath: "<your-wikijs-data-path-here>"
+              name: wikijs-storage
+      volumes:
+        - name: wikijs-storage
+          persistentVolumeClaim:
+            claimName: wikijs-pvc
