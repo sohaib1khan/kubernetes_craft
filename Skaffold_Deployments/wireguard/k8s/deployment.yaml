@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wireguard-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /path/to/your/data  # Change this to your desired path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wireguard-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: ""  # Directly binds to the specific PV
+  volumeName: wireguard-pv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard-deployment
+  labels:
+    app: wireguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard
+  template:
+    metadata:
+      labels:
+        app: wireguard
+    spec:
+      containers:
+      - name: wireguard
+        image: lscr.io/linuxserver/wireguard
+        ports:
+        - containerPort: 51820
+          protocol: UDP
+        env:
+        - name: PUID
+          value: "1000"  # Update as needed
+        - name: PGID
+          value: "1000"  # Update as needed
+        - name: TZ
+          value: "Your/Timezone"  # Update with your timezone (e.g., UTC, America/New_York)
+        - name: SERVERURL
+          value: "auto"
+        - name: SERVERPORT
+          value: "51820"
+        - name: PEERS
+          value: "3"  # Adjust the number of peers as needed
+        - name: PEERDNS
+          value: "auto"
+        - name: INTERNAL_SUBNET
+          value: "10.11.11.0"  # Update as needed
+        - name: ALLOWEDIPS
+          value: "0.0.0.0/0"
+        securityContext:
+          runAsUser: 0  # Run as root to ensure necessary privileges
+          capabilities:
+            add:
+            - NET_ADMIN
+            - SYS_MODULE
+        volumeMounts:
+        - mountPath: /config
+          name: wireguard-config
+        - mountPath: /lib/modules
+          name: lib-modules
+          readOnly: true
+      volumes:
+      - name: wireguard-config
+        persistentVolumeClaim:
+          claimName: wireguard-pvc
+      - name: lib-modules
+        hostPath:
+          path: /lib/modules
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wireguard-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 51820
+    protocol: UDP
+    targetPort: 51820
+  selector:
+    app: wireguard
