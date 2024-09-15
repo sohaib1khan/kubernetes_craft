@@ -1,6 +1,6 @@
 # Jenkins Deployment on Kubernetes with Skaffold
 
-This repository contains the necessary configuration to deploy Jenkins on a Kubernetes cluster using Skaffold. Jenkins is deployed as a single-node application, utilizing persistent storage on the host machine, and is exposed via a MetalLB load balancer.
+This directory contains the necessary configuration to deploy Jenkins on a Kubernetes cluster using Skaffold. Jenkins is deployed as a single-node application, utilizing persistent storage on the host machine, and is exposed via a MetalLB load balancer.
 
 ## Project Structure
 
