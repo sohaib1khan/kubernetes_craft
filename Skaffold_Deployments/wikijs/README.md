@@ -1,10 +1,17 @@
 # Wiki.js Kubernetes Deployment
 
-This repository contains a Kubernetes deployment configuration for deploying [Wiki.js](https://wiki.js.org/) with PostgreSQL on Kubernetes using `Skaffold` for continuous development.
+This directory  contains a Kubernetes deployment configuration for deploying [Wiki.js](https://wiki.js.org/) with PostgreSQL on Kubernetes using `Skaffold` for continuous development.
 
 ## Project Structure
 
-. ├── k8s │ └── deployment.yaml └── skaffold.yaml
+```
+.
+├── k8s
+│   └── deployment.yaml
+└── skaffold.yaml
+
+1 directory, 2 files
+```
 
 - **k8s/deployment.yaml**: The Kubernetes deployment YAML file containing the configuration for Wiki.js and PostgreSQL.
 - **skaffold.yaml**: The Skaffold configuration file for managing the deployment lifecycle in Kubernetes.
@@ -81,7 +88,7 @@ spec:
 
 ```
 
-&nbsp;2. **PostgreSQL Configuration**:
+2. **PostgreSQL Configuration**:
 
 The PostgreSQL database settings (username, password, database name) can be configured in the environment variables in the `deployment.yaml` file:
 
@@ -96,7 +103,7 @@ env:
 
 ```
 
-&nbsp;3.  **Wiki.js Configuration**:
+3.  **Wiki.js Configuration**:
 
 Wiki.js is configured to connect to PostgreSQL using environment variables in the `deployment.yaml` file. You can adjust these variables as needed:
 
