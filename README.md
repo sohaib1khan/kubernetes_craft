@@ -22,4 +22,4 @@ Visit: https://read.helixx.cloud/
 
 Happy Kubernetes-ing!
 
-!(k8sdemo)[https://github.com/sohaib1khan/kubernetes_craft/tree/main/img]
+[k8sdemo](https://github.com/sohaib1khan/kubernetes_craft/blob/main/img/Argo_TestFlow.gif)
