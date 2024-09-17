@@ -26,7 +26,7 @@ spec:
         command:
         - "/bin/sh"
         - "-c"
-        - "echo 'Hello This is From K8s!!' > /usr/share/nginx/html/index.html"
+        - "echo 'Hello This is From ARGOCD!!' > /usr/share/nginx/html/index.html"
         volumeMounts:
         - name: nginx-storage
           mountPath: /usr/share/nginx/html
