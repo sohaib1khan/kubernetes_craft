@@ -15,16 +15,23 @@ spec:
     spec:
       containers:
       - name: dashlink
-        image: DOCKER_IMG_REGISTRY/dashlink  # Image from docker image  registry
+        image: registry.helixx.cloud/dashlink:latest  # Ensure an image tag is provided
         ports:
         - containerPort: 5021
         volumeMounts:
         - name: dashlink-data
           mountPath: /app/data
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
       volumes:
       - name: dashlink-data
         hostPath:
           path: /home/k8server/dashlink
           type: Directory
       imagePullSecrets:
-      - name: regcred  # Reference the Docker registry secret here
+      - name: regcred  # Ensure the secret exists in the dashlink namespace
