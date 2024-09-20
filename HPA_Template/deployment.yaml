@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ deployment_name }}  # Name of the deployment
+  namespace: {{ namespace }}  # Namespace for the deployment
+spec:
+  replicas: {{ replicas }}  # Number of replicas
+  selector:
+    matchLabels:
+      app: {{ app_name }}  # Label to match with selector
+  template:
+    metadata:
+      labels:
+        app: {{ app_name }}  # Label for the app
+    spec:
+      containers:
+      - name: {{ container_name }}  # Name of the container
+        image: {{ image_registry_url }}/{{ image_name }}:{{ image_tag }}  # Image from registry
+        ports:
+        - containerPort: {{ container_port }}  # Application's container port
+        volumeMounts:
+        - name: {{ volume_name }}
+          mountPath: {{ container_mount_path }}  # Container's volume mount path
+        resources:
+          requests:
+            cpu: "{{ cpu_requests }}"  # CPU resource requests
+            memory: "{{ memory_requests }}"  # Memory resource requests
+          limits:
+            cpu: "{{ cpu_limits }}"  # CPU resource limits
+            memory: "{{ memory_limits }}"  # Memory resource limits
+      volumes:
+      - name: {{ volume_name }}  # Volume name
+        hostPath:
+          path: {{ host_path }}  # Path on the host machine
+          type: Directory
+      imagePullSecrets:
+      - name: {{ image_pull_secret }}  # Secret for private image registry
