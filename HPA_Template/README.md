@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains templates for setting up a **Kubernetes Deployment** and a **HorizontalPodAutoscaler (HPA)**. These templates are designed to be reusable, allowing you to easily deploy applications and autoscale them based on CPU utilization.
+This repository/directory contains templates for setting up a **Kubernetes Deployment** and a **HorizontalPodAutoscaler (HPA)**. These templates are designed to be reusable, allowing you to easily deploy applications and autoscale them based on CPU utilization.
 
 ## Files
 
