@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: log-parser
-        image: registry.helixx.cloud/log-parser
+        image: registry.helixx.cloud/log-parser:9c15c74-dirty
         ports:
         - containerPort: 5009
         volumeMounts:
