@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log File Analyzer</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <style>
+        @keyframes northernLights {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(45deg, #03d66c, #130f85, #2aa903, #0c3611, #013263); 
+            background-size: 400% 400%;
+            animation: northernLights 56s ease infinite;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .container {
+            margin-top: 50px;
+            background-color: rgba(64, 64, 64, 0.85);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .form-control, .btn {
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Log File for Analysis</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert alert-danger">
+              {% for category, message in messages %}
+                {{ message }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Select Log File:</label>
+                <input type="file" class="form-control" id="file" name="file" onchange="previewFile()">
+                <div id="upload-preview" class="text-info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="output_format">Output Format:</label>
+                <select class="form-control" id="output_format" name="output_format">
+                    <option value="table">Table</option>
+                    <option value="json">JSON</option>
+                    <option value="yaml">YAML</option>
+                    <option value="logs">Logs</option>
+                    <option value="raw">Raw</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        function previewFile() {
+            const fileInput = document.getElementById('file');
+            const preview = document.getElementById('upload-preview');
+            const file = fileInput.files[0];
+
+            if (file) {
+                preview.textContent = `Selected file: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            } else {
+                preview.textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>

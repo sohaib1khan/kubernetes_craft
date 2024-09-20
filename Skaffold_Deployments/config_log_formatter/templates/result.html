@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Log Analysis Result</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.5.3/fuse.min.js"></script> <!-- Add Fuse.js -->
+    <style>
+      body {
+        background-color: #2d2d2d;
+        color: #c0c0c0;
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        max-width: 95%;  /* Allow container to expand with page */
+        width: auto;
+        padding: 20px;
+        background-color: #3a3a3a;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h2 {
+        margin-bottom: 20px;
+        color: #f0f0f0;
+      }
+      #search {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        background-color: #444;
+        color: #fff;
+      }
+      .log-output {
+        white-space: pre-wrap;
+        background-color: #222;
+        padding: 20px;
+        border-radius: 8px;
+        color: #0f0;
+        max-height: 80vh; /* Make sure it doesn’t take the entire page vertically */
+        max-width: 95vw;  /* Limit to avoid going off-screen horizontally */
+        overflow: auto;
+        resize: both; /* Allow resizing horizontally and vertically */
+        min-width: 300px;
+        min-height: 200px;
+        font-family: "Courier New", Courier, monospace;
+        word-wrap: break-word;
+      }
+      .highlight-error {
+        background-color: #ff4444;
+        color: #fff;
+        font-weight: bold;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+      .home-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .home-btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Log Analysis Result</h2>
+
+      <!-- Search Bar for Fuzzy Filtering Logs -->
+      <div>
+        <input type="text" id="search" class="form-control" placeholder="Search logs" onkeyup="fuzzySearchLogs()">
+      </div>
+
+      <!-- Display Logs -->
+      <div id="log-output" class="log-output">
+        <pre id="log-data">{{ output }}</pre> <!-- Original Logs -->
+      </div>
+
+      <!-- Home Button -->
+      <a href="/" class="home-btn">Home</a> <!-- Add the home button -->
+
+    </div>
+
+    <script>
+      // Initialize Fuse.js for fuzzy search
+      var logData = document.getElementById('log-data').innerText.split("\n");
+    
+      // List of error keywords to highlight
+      const errorKeywords = ['error', 'fail', 'exception', 'critical'];
+    
+      // Function to highlight error lines and searched terms in the log data
+      function highlightErrorsAndSearch(log, searchTerm = "") {
+        let highlightedLog = log;
+    
+        // Highlight error keywords
+        errorKeywords.forEach(keyword => {
+          const regex = new RegExp(`(${keyword})`, 'gi'); // Case insensitive search
+          highlightedLog = highlightedLog.replace(regex, '<span class="highlight-error">$1</span>'); // Wrap error keywords with span
+        });
+    
+        // Highlight search term, if provided
+        if (searchTerm) {
+          const searchRegex = new RegExp(`(${searchTerm})`, 'gi'); // Case insensitive search for the search term
+          highlightedLog = highlightedLog.replace(searchRegex, '<span class="highlight-error">$1</span>'); // Wrap search term with span
+        }
+    
+        return highlightedLog;
+      }
+    
+      // Function to apply error and search term highlighting to all log lines
+      function highlightAll(logLines, searchTerm = "") {
+        return logLines.map(line => highlightErrorsAndSearch(line, searchTerm));
+      }
+    
+      var options = {
+        includeScore: true,    // Include the score to measure fuzzy match accuracy
+        threshold: 0.4,        // A good value for fuzziness (lower = stricter matching)
+        ignoreLocation: true,  // Makes the search more flexible
+        useExtendedSearch: true, // Allows for advanced searching
+        keys: ['line'],        // Search within 'line' field
+      };
+    
+      var fuse = new Fuse(logData.map(line => ({ line })), options);  // Initialize with log data
+    
+      // Apply error highlighting to original log data
+      var highlightedLogData = highlightAll(logData);
+    
+      // Fuzzy Search function
+      function fuzzySearchLogs() {
+        var input = document.getElementById("search").value;
+        var logOutput = document.getElementById("log-output");
+    
+        // Perform fuzzy search on log data
+        var result = fuse.search(input.toLowerCase());  // Convert input to lowercase
+        
+        // If no input, reset the log output to original logs with error highlighting
+        if (input === "") {
+          logOutput.innerHTML = "<pre id='log-data'>" + highlightedLogData.join("\n") + "</pre>";
+        } else {
+          // Display only fuzzy matched results with context and error highlighting for search term
+          var filteredLogs = result.map(res => highlightAll(logData.slice(Math.max(0, res.refIndex - 2), res.refIndex + 3), input).join("\n")).join("\n---\n");
+          logOutput.innerHTML = "<pre id='log-data'>" + filteredLogs + "</pre>";
+        }
+      }
+    
+      // Initial load with error highlighting
+      document.getElementById('log-output').innerHTML = "<pre id='log-data'>" + highlightedLogData.join("\n") + "</pre>";
+    </script>   
+  </body>
+</html>

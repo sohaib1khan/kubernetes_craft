@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-parser
+spec:
+  replicas: 1  # Initial replica count
+  selector:
+    matchLabels:
+      app: log-parser
+  template:
+    metadata:
+      labels:
+        app: log-parser
+    spec:
+      containers:
+      - name: log-parser
+        image: registry.helixx.cloud/log-parser
+        ports:
+        - containerPort: 5009
+        volumeMounts:
+        - mountPath: /app/data
+          name: data-volume
+        env:
+        - name: FLASK_ENV
+          value: development
+        - name: FLASK_APP
+          value: app.py
+        resources:
+          requests:
+            cpu: "200m"        # Requests 200 millicores
+            memory: "256Mi"    # Requests 256 MiB memory
+          limits:
+            cpu: "500m"        # Limits to 500 millicores
+            memory: "512Mi"    # Limits to 512 MiB memory
+      volumes:
+      - name: data-volume
+        hostPath:
+          path: /home/k8server/log_parser_data
+      imagePullSecrets:
+      - name: regcred
