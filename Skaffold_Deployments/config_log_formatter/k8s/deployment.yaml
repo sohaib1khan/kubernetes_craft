@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: log-parser
 spec:
-  replicas: 1  # Initial replica count
+  replicas: 2  # Initial replica count
   selector:
     matchLabels:
       app: log-parser
