@@ -1,6 +1,6 @@
 # Vaultwarden Kubernetes Deployment
 
-This repository contains the configuration to deploy [Vaultwarden](https://github.com/dani-garcia/vaultwarden) on a Kubernetes cluster. Vaultwarden is an unofficial Bitwarden server implementation written in Rust. It can be self-hosted and is designed to be lightweight and scalable.
+This directory contains the configuration to deploy [Vaultwarden](https://github.com/dani-garcia/vaultwarden) on a Kubernetes cluster. Vaultwarden is an unofficial Bitwarden server implementation written in Rust. It can be self-hosted and is designed to be lightweight and scalable.
 
 ## Prerequisites
 
