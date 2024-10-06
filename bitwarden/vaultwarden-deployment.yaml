@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden
+  labels:
+    app: vaultwarden
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaultwarden
+  template:
+    metadata:
+      labels:
+        app: vaultwarden
+    spec:
+      containers:
+      - name: vaultwarden
+        image: vaultwarden/server:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: vaultwarden-data
+          mountPath: /data
+        env:
+        - name: DOMAIN
+          value: "https://user1.bitwarden.com"
+        - name: LOGIN_RATELIMIT_MAX_BURST
+          value: "10"
+        - name: LOGIN_RATELIMIT_SECONDS
+          value: "60"
+        - name: ADMIN_RATELIMIT_MAX_BURST
+          value: "10"
+        - name: ADMIN_RATELIMIT_SECONDS
+          value: "60"
+        - name: ADMIN_TOKEN
+          value: "CREATE_YOUR_OWN"
+        - name: SENDS_ALLOWED
+          value: "false"
+        - name: EMERGENCY_ACCESS_ALLOWED
+          value: "true"
+        - name: WEB_VAULT_ENABLED
+          value: "true"
+        - name: SIGNUPS_ALLOWED
+          value: "false"
+        - name: SIGNUPS_VERIFY
+          value: "false"
+        - name: SIGNUPS_VERIFY_RESEND_TIME
+          value: "3600"
+        - name: SIGNUPS_VERIFY_RESEND_LIMIT
+          value: "5"
+        - name: SIGNUPS_DOMAINS_WHITELIST
+          value: "USER1@gmail.com,USER2@gmail.com"
+      volumes:
+      - name: vaultwarden-data
+        hostPath:
+          path: /PATH/TO/bitwarden
+          type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vaultwarden
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.247
+  ports:
+    - port: 8084
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: vaultwarden
