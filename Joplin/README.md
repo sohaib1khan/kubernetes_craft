@@ -70,7 +70,7 @@ To deploy the application using Skaffold, follow these steps:
 ### Step 1: Clone the Repository
 
 ```
-git clone <your-repository-url>
+git clone https://github.com/sohaib1khan/kubernetes_craft.git 
 cd Joplin
 
 ```
