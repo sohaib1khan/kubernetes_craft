@@ -1,6 +1,6 @@
 # Joplin Kubernetes Deployment
 
-This repository contains Kubernetes manifests to deploy the [Joplin Server](https://joplinapp.org/) with a PostgreSQL database on a Kubernetes cluster. The deployment is managed using Skaffold, allowing you to deploy and manage the application easily.
+This directory contains Kubernetes manifests to deploy the [Joplin Server](https://joplinapp.org/) with a PostgreSQL database on a Kubernetes cluster. The deployment is managed using Skaffold, allowing you to deploy and manage the application easily.
 
 ## Prerequisites
 
