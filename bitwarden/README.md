@@ -21,8 +21,8 @@ Before deploying Vaultwarden on your Kubernetes cluster, ensure that the followi
 ### Step 1: Clone the Repository
 
 ```bash
-git clone <your-repository-url>
-cd <your-repository-directory>
+git clone <https://github.com/sohaib1khan/kubernetes_craft.git
+cd bitwarden
 ```
 
 ### Step 2: Customize the Configuration
