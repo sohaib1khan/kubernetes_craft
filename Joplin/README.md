@@ -1,5 +1,3 @@
-# Joplin Kubernetes Deployment
-
 This directory contains Kubernetes manifests to deploy the [Joplin Server](https://joplinapp.org/) with a PostgreSQL database on a Kubernetes cluster. The deployment is managed using Skaffold, allowing you to deploy and manage the application easily.
 
 ## Prerequisites
@@ -13,12 +11,12 @@ Before deploying Joplin on your Kubernetes cluster, ensure the following prerequ
 
 ### Required Tools:
 
-1. **kubectl**: For interacting with your Kubernetes cluster.
-2. **Skaffold**: To handle the deployment of your Kubernetes manifests.
+1.  **kubectl**: For interacting with your Kubernetes cluster.
+2.  **Skaffold**: To handle the deployment of your Kubernetes manifests.
 
 ## Project Structure
 
-```bash
+```
 .
 ├── k8s/
 │   ├── joplin-server-deployment.yaml   # Deployment and Service for Joplin server
@@ -27,6 +25,8 @@ Before deploying Joplin on your Kubernetes cluster, ensure the following prerequ
 │   ├── postgres-secret.yaml            # Secret for PostgreSQL password
 ├── skaffold.yaml                       # Skaffold configuration for managing deployments
 └── README.md                           # This README file
+
+```
 
 ## Configuration
 
@@ -38,9 +38,10 @@ In `k8s/postgres-secret.yaml`, the `POSTGRES_PASSWORD` is stored as a base64-enc
 
 ```
 echo -n "your-new-password" | base64
+
 ```
 
-Replace the `POSTGRES_PASSWORD` value in `postgres-secret.yaml` with the new base64 encoded password.
+Replace the `POSTGRES_PASSWORD` value in `postgres-secret.yaml` with the new base64-encoded password.
 
 ### Joplin Base URL and LoadBalancer IP
 
@@ -101,7 +102,6 @@ Once the deployment is complete, you can access the Joplin server at:
 
 ```
 http://<your-loadbalancer-ip>:22300
-
 ```
 
 or
@@ -180,4 +180,3 @@ kubectl logs <pod-name>
 ls -al /home/k8server/joplin_server
 
 ```
-
