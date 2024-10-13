@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joplin-server
+  labels:
+    app: joplin-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: joplin-server
+  template:
+    metadata:
+      labels:
+        app: joplin-server
+    spec:
+      containers:
+      - name: joplin-server
+        image: joplin/server:latest
+        ports:
+        - containerPort: 22300
+        env:
+        - name: APP_PORT
+          value: "22300"
+        - name: APP_BASE_URL
+          value: "http://URL-TO-REPLACE:22300"
+        - name: DB_CLIENT
+          value: "pg"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DATABASE
+          value: "joplindb"
+        - name: POSTGRES_USER
+          value: "joplin"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_HOST
+          value: "postgres"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: joplin-server
+spec:
+  type: LoadBalancer
+  loadBalancerIP: IP-TO-REPLACE ( 192.168.1.100)
+  ports:
+  - port: 22300
+    targetPort: 22300
+  selector:
+    app: joplin-server
