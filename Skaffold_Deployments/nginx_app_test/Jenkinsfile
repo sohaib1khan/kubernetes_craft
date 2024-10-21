@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Ensure Jenkins has access to the KUBECONFIG credentials stored in Jenkins
-        KUBECONFIG_CREDENTIALS = 'your-kubeconfig-credentials-id' // Replace this with the actual credentials ID from Jenkins
+        KUBECONFIG_CREDENTIALS = '5274805a-5d4b-43bd-a552-1700d7574ebf' // Replace this with the actual credentials ID from Jenkins
     }
 
     stages {
