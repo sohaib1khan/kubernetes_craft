@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = '/path/to/your/kubeconfig' // Make sure this points to your kubeconfig file
+        KUBECONFIG = '/home/devk3s/.kube/config' // Ensure the Jenkins agent has access to your KUBECONFIG
     }
 
     stages {
@@ -16,8 +16,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Run Skaffold to deploy to your k3s cluster
-                    sh 'skaffold run -f Skaffold_Deployments/nginx_app_test/k8s/skaffold.yaml'
+                    // Apply the Kubernetes manifests from the checked-out repo
+                    sh 'kubectl apply -f Skaffold_Deployments/nginx_app_test/k8s/'
                 }
             }
         }
