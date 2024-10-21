@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = '/home/devk3s/.kube/config' // Ensure the Jenkins agent has access to your KUBECONFIG
+        // Ensure Jenkins has access to the KUBECONFIG credentials stored in Jenkins
+        KUBECONFIG_CREDENTIALS = 'your-kubeconfig-credentials-id' // Replace this with the actual credentials ID from Jenkins
     }
 
     stages {
@@ -16,8 +17,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Apply the Kubernetes manifests from the checked-out repo
-                    sh 'kubectl apply -f Skaffold_Deployments/nginx_app_test/k8s/'
+                    // Use Kubernetes CLI plugin to run kubectl commands
+                    kubernetes.withKubeConfig([credentialsId: "${KUBECONFIG_CREDENTIALS}"]) {
+                        sh 'kubectl apply -f Skaffold_Deployments/nginx_app_test/k8s/'
+                    }
                 }
             }
         }
