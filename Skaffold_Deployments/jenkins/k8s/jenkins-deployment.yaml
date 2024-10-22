@@ -14,9 +14,17 @@ spec:
       labels:
         app: jenkins
     spec:
+      initContainers:
+      - name: install-kubectl
+        image: bitnami/kubectl:latest
+        command: ['sh', '-c', 'cp /opt/bitnami/kubectl/bin/kubectl /kubectl-dir/kubectl']
+        volumeMounts:
+        - name: kubectl-bin
+          mountPath: /kubectl-dir
+          
       containers:
       - name: jenkins
-        image: jenkins/jenkins:lts
+        image: jenkins/jenkins:latest
         ports:
         - containerPort: 8080
         - containerPort: 50000
@@ -29,6 +37,10 @@ spec:
           mountPath: /var/run/docker.sock
         - name: docker-bin
           mountPath: /usr/local/bin/docker
+        - name: kubectl-bin
+          mountPath: /usr/local/bin/kubectl
+          subPath: kubectl
+          
       volumes:
       - name: jenkins-data
         hostPath:
@@ -39,3 +51,5 @@ spec:
       - name: docker-bin
         hostPath:
           path: /usr/local/bin/docker
+      - name: kubectl-bin
+        emptyDir: {}
