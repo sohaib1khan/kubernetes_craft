@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG_CREDENTIALS = '5274805a-5d4b-43bd-a552-1700d7574ebf' // Your KUBECONFIG credentials ID
+        KUBECONFIG_CREDENTIALS = '8bfe3e4a-62c9-4305-a5e2-4d4debb8242b' // The correct Secret file ID for kubeconfig
     }
 
     stages {
@@ -16,8 +16,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
+                    // Use Kubeconfig credentials as a Secret file
                     withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBECONFIG')]) {
-                        // Using KUBECONFIG from Jenkins credentials
                         sh 'kubectl apply -f Skaffold_Deployments/nginx_app_test/k8s/'
                     }
                 }
