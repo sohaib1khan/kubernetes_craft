@@ -31,7 +31,7 @@ spec:
       volumes:
       - name: dashlink-data
         hostPath:
-          path: /home/k8server/dashlink
+          path: /home/devk3s/dashlink
           type: Directory
       imagePullSecrets:
       - name: regcred  # Ensure the secret exists in the dashlink namespace
