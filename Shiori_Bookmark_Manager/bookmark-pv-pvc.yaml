@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bookmark-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/home/k8server/bookmark_manager"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bookmark-pvc
+  namespace: bookmark
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: bookmark-pv         # Explicitly bind to the PV
+  storageClassName: ""            # Disable dynamic provisioning

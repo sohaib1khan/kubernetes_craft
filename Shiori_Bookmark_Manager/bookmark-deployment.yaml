@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shiori
+  namespace: bookmark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shiori
+  template:
+    metadata:
+      labels:
+        app: shiori
+    spec:
+      containers:
+        - name: shiori
+          image: ghcr.io/go-shiori/shiori:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SHIORI_DIR
+              value: "/srv/shiori"
+            - name: SHIORI_HTTP_SECRET_KEY
+              value: "a-strong-secret-key"
+          volumeMounts:
+            - name: bookmark-data
+              mountPath: /srv/shiori
+      volumes:
+        - name: bookmark-data
+          persistentVolumeClaim:
+            claimName: bookmark-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shiori-service
+  namespace: bookmark
+spec:
+  type: LoadBalancer
+  selector:
+    app: shiori
+  ports:
+    - port: 80
+      targetPort: 8080
