@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: freshrss-update
+  namespace: freshrss
+spec:
+  schedule: "*/30 * * * *"  # Every 30 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: freshrss-update
+              image: curlimages/curl:latest
+              command:
+                - "curl"
+                - "-X"
+                - "POST"
+                - "-d"
+                - "action=updateFeeds"
+                - "http://<ClusterIP>/api/feeds/update"  # Replace <ClusterIP> with the actual IP address
+          restartPolicy: OnFailure
