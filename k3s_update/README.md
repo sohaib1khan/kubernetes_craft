@@ -38,7 +38,7 @@ A robust bash script to safely upgrade K3s clusters with proper node draining, v
 1.  Download the script:
     
     ```bash
-    curl -o k3s-upgrade.sh https://your-script-location/k3s-upgrade.sh
+    curl -o k3s-upgrade.sh https://github.com/sohaib1khan/kubernetes_craft/blob/main/k3s_update/k3s-upgrade.sh
     ```
     
 2.  Make it executable:
