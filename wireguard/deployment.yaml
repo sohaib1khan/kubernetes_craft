@@ -1,0 +1,197 @@
+# ---
+# # Namespace
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: wireguard
+#   labels:
+#     name: wireguard
+
+---
+# PersistentVolume for host path storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wireguard-pv
+  labels:
+    app: wireguard
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath:
+    path: /home/k8server/wireguard
+    type: DirectoryOrCreate
+
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wireguard-pvc
+  namespace: wireguard
+  labels:
+    app: wireguard
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-storage
+  selector:
+    matchLabels:
+      app: wireguard
+
+---
+# Service for WireGuard VPN (UDP 51820) and Web UI (TCP 51821)
+apiVersion: v1
+kind: Service
+metadata:
+  name: wireguard-service
+  namespace: wireguard
+  labels:
+    app: wireguard
+  annotations:
+    metallb.universe.tf/loadBalancer-IPs: 192.168.1.208  # Static IP from MetalLB pool
+spec:
+  type: LoadBalancer
+  ports:
+    - name: wireguard-vpn
+      port: 51820
+      targetPort: 51820
+      protocol: UDP
+    - name: wireguard-ui
+      port: 51821
+      targetPort: 51821
+      protocol: TCP
+  selector:
+    app: wireguard
+
+---
+# Deployment for WireGuard with wg-easy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard-deployment
+  namespace: wireguard
+  labels:
+    app: wireguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wireguard
+  strategy:
+    type: Recreate  # Important for stateful apps with persistent storage
+  template:
+    metadata:
+      labels:
+        app: wireguard
+    spec:
+      containers:
+      - name: wg-easy
+        image: ghcr.io/wg-easy/wg-easy:15
+        ports:
+        - containerPort: 51820
+          protocol: UDP
+          name: wireguard-vpn
+        - containerPort: 51821
+          protocol: TCP
+          name: wireguard-ui
+        env:
+        # Environment variables for wg-easy configuration
+        - name: INSECURE
+          value: "true"  # Set to false when using HTTPS/reverse proxy
+        - name: WG_HOST
+          value: "192.168.1.240"  # MetalLB LoadBalancer IP - replace with your preferred IP
+        - name: WG_PORT
+          value: "51820"
+        - name: WG_DEFAULT_ADDRESS
+          value: "10.8.0.x"
+        - name: WG_DEFAULT_DNS
+          value: "1.1.1.1,1.0.0.1"  # Cloudflare DNS
+        - name: WG_ALLOWED_IPS
+          value: "0.0.0.0/0"
+        - name: WG_PERSISTENT_KEEPALIVE
+          value: "25"
+        - name: WG_PRE_UP
+          value: ""
+        - name: WG_POST_UP
+          value: ""
+        - name: WG_PRE_DOWN
+          value: ""
+        - name: WG_POST_DOWN
+          value: ""
+        # Optional: Set password for web UI (comment out to use setup wizard)
+        # - name: PASSWORD
+        #   value: "your-secure-password-here"
+        # - name: PASSWORD_HASH
+        #   value: ""  # Use bcrypt hash if you prefer
+        volumeMounts:
+        - name: wireguard-config
+          mountPath: /etc/wireguard
+        - name: lib-modules
+          mountPath: /lib/modules
+          readOnly: true
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+            - SYS_MODULE
+          privileged: true
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: wireguard-config
+        persistentVolumeClaim:
+          claimName: wireguard-pvc
+      - name: lib-modules
+        hostPath:
+          path: /lib/modules
+          type: Directory
+      hostNetwork: false  # Set to true if you need host networking
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      
+      # Optional: Node selection (uncomment if you want to run on specific node)
+      # nodeSelector:
+      #   kubernetes.io/hostname: your-preferred-node
+      
+      # Optional: Tolerations for master node (uncomment if needed)
+      # tolerations:
+      # - key: "node-role.kubernetes.io/control-plane"
+      #   operator: "Exists"
+      #   effect: "NoSchedule"
+
+---
+# Optional: Ingress for web UI (requires ingress controller)
+# Uncomment and configure if you want to use ingress instead of NodePort
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: wireguard-ingress
+#   namespace: wireguard
+#   annotations:
+#     kubernetes.io/ingress.class: "traefik"  # or nginx, depending on your setup
+#     # traefik.ingress.kubernetes.io/router.tls: "true"  # Enable for HTTPS
+# spec:
+#   rules:
+#   - host: wireguard.yourdomain.com  # Replace with your domain
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: wireguard-service
+#             port:
+#               number: 51821
