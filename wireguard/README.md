@@ -373,21 +373,3 @@ metallb.universe.tf/loadBalancer-IPs: 192.168.1.242
 INSECURE: "false"                  # Require HTTPS
 ```
 
-### Multiple Instances
-To run multiple WireGuard instances:
-1. Change namespace name
-2. Use different PV name
-3. Use different MetalLB IP
-4. Use different WG_PORT
-5. Update all references accordingly
-
-## 🎓 DevOps Best Practices
-
-- **Version Control**: Store this deployment in Git
-- **GitOps**: Use ArgoCD/Flux for automated deployments  
-- **Monitoring**: Integrate with Prometheus/Grafana
-- **Secrets Management**: Use Kubernetes secrets for passwords
-- **Helm/Kustomize**: Convert to Helm chart for easier management
-- **CI/CD**: Automate testing and deployment pipeline
-
----
