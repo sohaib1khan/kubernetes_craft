@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Craft - Learning Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #326ce5 75%, #4285f4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            background: rgba(26, 26, 46, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(66, 133, 244, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #326ce5 0%, #4285f4 25%, #5a9df8 50%, #87ceeb 75%, #b3d9ff 100%);
+            color: #1a1a2e;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="k8s" width="30" height="30" patternUnits="userSpaceOnUse"><g transform="translate(15,15)"><path d="M0,-8 L7,-2 L4,7 L-4,7 L-7,-2 Z" fill="none" stroke="rgba(26,26,46,0.1)" stroke-width="1"/><circle cx="0" cy="0" r="1" fill="rgba(26,26,46,0.1)"/></g></pattern></defs><rect width="100" height="100" fill="url(%23k8s)"/></svg>');
+            opacity: 0.4;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 4.2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+            font-weight: 900;
+        }
+
+        .header p {
+            font-size: 1.6em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .journey-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .journey-badge {
+            background: rgba(26, 26, 46, 0.8);
+            color: #87ceeb;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 700;
+            animation: float 4s ease-in-out infinite;
+            box-shadow: 0 6px 20px rgba(26, 26, 46, 0.3);
+            border: 2px solid rgba(50, 108, 229, 0.5);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .journey-badge:nth-child(1) { animation-delay: 0s; }
+        .journey-badge:nth-child(2) { animation-delay: 0.5s; }
+        .journey-badge:nth-child(3) { animation-delay: 1s; }
+        .journey-badge:nth-child(4) { animation-delay: 1.5s; }
+
+        .stats-bar {
+            background: rgba(50, 108, 229, 0.3);
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #87ceeb;
+            display: block;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .growing-indicator {
+            color: #4ade80;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
+            border-bottom: 3px solid #4b5563;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 25px 35px;
+            text-align: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: #9ca3af;
+            transition: all 0.4s ease;
+            position: relative;
+            font-family: inherit;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #326ce5 0%, #4285f4 100%);
+            color: #ffffff;
+            border-bottom: 4px solid #87ceeb;
+            box-shadow: 0 -4px 20px rgba(50, 108, 229, 0.4);
+        }
+
+        .tab:hover:not(.active) {
+            background: #4b5563;
+            color: #f3f4f6;
+        }
+
+        .content {
+            min-height: 800px;
+            position: relative;
+            background: rgba(26, 26, 46, 0.8);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 50px;
+            animation: slideIn 0.8s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Project Grid */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .project-category {
+            background: rgba(31, 41, 55, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            border-left: 6px solid #326ce5;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(50, 108, 229, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(50, 108, 229, 0.2) 0%, transparent 70%);
+        }
+
+        .project-category:hover {
+            transform: translateY(-12px) scale(1.02);
+            background: rgba(31, 41, 55, 1);
+            box-shadow: 0 25px 50px rgba(50, 108, 229, 0.3);
+            border-left-color: #87ceeb;
+        }
+
+        .project-category h3 {
+            color: #87ceeb;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 800;
+        }
+
+        .project-category p {
+            color: #d1d5db;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+
+        .project-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .project-list li {
+            color: #f3f4f6;
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1em;
+            border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+        }
+
+        .project-list li:last-child {
+            border-bottom: none;
+        }
+
+        .project-list li::before {
+            content: "⚙️";
+            position: absolute;
+            left: 0;
+            color: #326ce5;
+            font-size: 1.1em;
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Kubernetes Workflow Demo */
+        .k8s-terminal {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 35px 0;
+            border: 2px solid #326ce5;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .k8s-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .k8s-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .k8s-button {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+        }
+
+        .close { background: #ef4444; }
+        .minimize { background: #f59e0b; }
+        .maximize { background: #10b981; }
+
+        .k8s-title {
+            margin-left: 25px;
+            color: #9ca3af;
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+
+        .k8s-line {
+            display: flex;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #326ce5;
+            margin-right: 15px;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .command {
+            color: #87ceeb;
+            font-weight: 600;
+        }
+
+        .output {
+            color: #d1d5db;
+            margin-left: 25px;
+            font-style: italic;
+        }
+
+        .success {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .warning {
+            color: #fbbf24;
+        }
+
+        /* Learning Journey Timeline */
+        .journey-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #326ce5, #4285f4, #87ceeb);
+        }
+
+        .journey-milestone {
+            position: relative;
+            margin-left: 90px;
+            margin-bottom: 45px;
+            background: rgba(31, 41, 55, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(50, 108, 229, 0.3);
+        }
+
+        .journey-milestone::before {
+            content: '';
+            position: absolute;
+            left: -75px;
+            top: 25px;
+            width: 20px;
+            height: 20px;
+            background: #326ce5;
+            border-radius: 50%;
+            border: 4px solid #0f172a;
+            animation: pulse 2s infinite;
+        }
+
+        .journey-milestone h4 {
+            color: #87ceeb;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .journey-status {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-left: 15px;
+        }
+
+        .status-mastered {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .status-exploring {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-planning {
+            background: rgba(139, 206, 255, 0.2);
+            color: #87ceeb;
+        }
+
+        /* Tech Stack Display */
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 35px 0;
+        }
+
+        .tech-card {
+            background: rgba(31, 41, 55, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(50, 108, 229, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tech-card:hover {
+            background: rgba(31, 41, 55, 1);
+            border-color: #326ce5;
+            transform: translateY(-8px);
+        }
+
+        .tech-card h4 {
+            color: #87ceeb;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .tech-icon {
+            background: rgba(50, 108, 229, 0.2);
+            color: #87ceeb;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+            border: 1px solid rgba(50, 108, 229, 0.3);
+        }
+
+        .upcoming-icon {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.3);
+            animation: pulse 3s infinite;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: rgba(50, 108, 229, 0.1);
+            border: 1px solid rgba(50, 108, 229, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 35px 0;
+            border-left: 6px solid #326ce5;
+        }
+
+        .info-box h4 {
+            color: #87ceeb;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2em;
+        }
+
+        .learning-box {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 35px 0;
+            border-left: 6px solid #4ade80;
+        }
+
+        .learning-box h4 {
+            color: #4ade80;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2em;
+        }
+
+        .wiki-box {
+            background: rgba(139, 206, 255, 0.1);
+            border: 1px solid rgba(139, 206, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 35px 0;
+            border-left: 6px solid #87ceeb;
+        }
+
+        .wiki-box h4 {
+            color: #87ceeb;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2em;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            color: #326ce5;
+            border: 1px solid #374151;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: "kubectl ";
+            color: #87ceeb;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #1f2937;
+            color: #9ca3af;
+            border: 1px solid #4b5563;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .copy-btn:hover {
+            background: #374151;
+            color: #f3f4f6;
+            border-color: #326ce5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .project-grid, .tech-stack {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 3em;
+            }
+
+            .stats-bar {
+                gap: 50px;
+            }
+
+            .k8s-line {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .output {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+
+            .journey-milestone {
+                margin-left: 60px;
+            }
+
+            .journey-timeline::before {
+                left: 25px;
+            }
+
+            .journey-milestone::before {
+                left: -45px;
+            }
+
+            .journey-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .highlight {
+            background: rgba(50, 108, 229, 0.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            color: #87ceeb;
+            font-weight: 700;
+        }
+
+        .gif-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 15px;
+            border: 2px solid #326ce5;
+        }
+
+        .gif-placeholder {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            background: linear-gradient(45deg, #326ce5, #4285f4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: white;
+            margin: 0 auto;
+        }
+
+        .project-count {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>☸️ Kubernetes Craft</h1>
+                <p>A Continuous Learning Journey</p>
+                <p class="subtitle">From Basic Pods to Complex Orchestration • Always Experimenting • Always Growing</p>
+                <div class="journey-badges">
+                    <span class="journey-badge">📚 Learning Journey</span>
+                    <span class="journey-badge">🚀 Real Projects</span>
+                    <span class="journey-badge">🔄 Continuous Growth</span>
+                    <span class="journey-badge">⚡ Production Ready</span>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number">20+</span>
+                    <div class="stat-label">K8s Projects</div>
+                    <div class="growing-indicator">Growing Daily</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">∞</span>
+                    <div class="stat-label">Learning Curve</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <div class="stat-label">Hands-On</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <div class="stat-label">Homelab</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('journey')">🎯 Learning Journey</button>
+            <button class="tab" onclick="showTab('projects')">🚀 Projects Collection</button>
+            <button class="tab" onclick="showTab('stack')">🛠️ Tech Stack</button>
+            <button class="tab" onclick="showTab('experiments')">🔬 Experiments</button>
+            <button class="tab" onclick="showTab('resources')">📖 Resources</button>
+        </div>
+
+        <div class="content">
+            <!-- Learning Journey Tab -->
+            <div class="tab-content active" id="journey">
+                <div class="journey-timeline">
+                    <div class="journey-milestone">
+                        <h4>Basic Kubernetes Concepts <span class="journey-status status-mastered">✅ Mastered</span></h4>
+                        <p>Started with fundamental K8s concepts - Pods, Services, Deployments, and ConfigMaps. Built my first clusters and understood the orchestration magic.</p>
+                    </div>
+
+                    <div class="journey-milestone">
+                        <h4>Application Deployments <span class="journey-status status-mastered">✅ Mastered</span></h4>
+                        <p>Deployed real applications like NextCloud, WordPress, Ghost CMS, and Bitwarden. Learned about persistent storage, networking, and service discovery.</p>
+                    </div>
+
+                    <div class="journey-milestone">
+                        <h4>Monitoring & Observability <span class="journey-status status-mastered">✅ Mastered</span></h4>
+                        <p>Implemented Prometheus stack for comprehensive monitoring. Added Grafana dashboards, alerting rules, and learned about cloud-native observability.</p>
+                    </div>
+
+                    <div class="journey-milestone">
+                        <h4>GitOps & Automation <span class="journey-status status-exploring">🔄 Exploring</span></h4>
+                        <p>Currently diving deep into ArgoCD for GitOps workflows. Building CI/CD pipelines and automated deployment strategies with Skaffold.</p>
+                    </div>
+
+                    <div class="journey-milestone">
+                        <h4>Advanced Networking <span class="journey-status status-exploring">🔄 Exploring</span></h4>
+                        <p>Experimenting with Ingress controllers, service meshes, and network policies. Understanding CNI plugins and cluster networking patterns.</p>
+                    </div>
+
+                    <div class="journey-milestone">
+                        <h4>Security & Compliance <span class="journey-status status-planning">📅 Planned</span></h4>
+                        <p>Next phase focuses on Pod Security Standards, RBAC implementation, secrets management, and vulnerability scanning workflows.</p>
+                    </div>
+
+                    <div class="journey-milestone">
+                        <h4>Multi-Cluster Management <span class="journey-status status-planning">📅 Planned</span></h4>
+                        <p>Planning to explore cluster federation, multi-cluster deployments, and disaster recovery strategies across different environments.</p>
+                    </div>
+                </div>
+
+                <div class="gif-container">
+                    <div class="gif-placeholder">
+                        🎬 ArgoCD GitOps Workflow Demo<br>
+                        <small>(Live from my homelab)</small>
+                    </div>
+                </div>
+
+                <div class="learning-box">
+                    <h4>📚 Continuous Learning Philosophy</h4>
+                    <p>Every project in this repository represents a step in my Kubernetes mastery journey. I believe in <span class="highlight">hands-on learning</span> - building real applications, breaking things, fixing them, and documenting the entire process. Each failure teaches more than any documentation ever could!</p>
+                </div>
+
+                <div class="wiki-box">
+                    <h4>📖 Personal Knowledge Base</h4>
+                    <p>I maintain a detailed wiki at <strong><a href="https://read.helixx.cloud/" style="color: #87ceeb;">read.helixx.cloud</a></strong> running on my homelab (99.99% uptime!). It contains in-depth guides, troubleshooting notes, and detailed playbooks for every experiment in this repository.</p>
+                </div>
+            </div>
+
+            <!-- Projects Collection Tab -->
+            <div class="tab-content" id="projects">
+                <div class="project-grid">
+                    <div class="project-category">
+                        <h3>🌐 Web Applications <span class="project-count">6 Projects</span></h3>
+                        <p>Production-ready web applications deployed with persistent storage, proper networking, and monitoring.</p>
+                        <ul class="project-list">
+                            <li><strong>NextCloud</strong> - Personal cloud storage with PostgreSQL backend</li>
+                            <li><strong>WordPress</strong> - Content management with MySQL and Redis caching</li>
+                            <li><strong>Ghost CMS</strong> - Modern publishing platform with SQLite</li>
+                            <li><strong>Nginx-App</strong> - Custom web application with reverse proxy</li>
+                            <li><strong>FreshRSS</strong> - Self-hosted RSS aggregator</li>
+                            <li><strong>Pi-hole</strong> - Network-wide ad blocking DNS server</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🔐 Security & Tools <span class="project-count">4 Projects</span></h3>
+                        <p>Security-focused applications and developer tools for enhanced productivity and protection.</p>
+                        <ul class="project-list">
+                            <li><strong>Bitwarden</strong> - Password manager with HA configuration</li>
+                            <li><strong>WireGuard</strong> - VPN server for secure remote access</li>
+                            <li><strong>Shiori Bookmarks</strong> - Bookmark manager with full-text search</li>
+                            <li><strong>Joplin</strong> - Note-taking application with synchronization</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>📊 Monitoring & Analytics <span class="project-count">3 Projects</span></h3>
+                        <p>Comprehensive observability stack for cluster monitoring, logging, and performance analysis.</p>
+                        <ul class="project-list">
+                            <li><strong>Prometheus Stack</strong> - Complete monitoring with Grafana dashboards</li>
+                            <li><strong>Splunk</strong> - Log aggregation and security information management</li>
+                            <li><strong>MetalLB</strong> - Load balancer for bare-metal clusters</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🚀 DevOps & Automation <span class="project-count">5 Projects</span></h3>
+                        <p>GitOps workflows, CI/CD pipelines, and infrastructure automation tools.</p>
+                        <ul class="project-list">
+                            <li><strong>Skaffold Deployments</strong> - Development workflow automation</li>
+                            <li><strong>K3s Setup</strong> - Lightweight Kubernetes installation scripts</li>
+                            <li><strong>K3s Updates</strong> - Automated cluster upgrade procedures</li>
+                            <li><strong>Cluster Setup</strong> - Multi-node cluster bootstrapping</li>
+                            <li><strong>HPA Templates</strong> - Horizontal Pod Autoscaler configurations</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🔬 Experimental Projects <span class="project-count">∞ Growing</span></h3>
+                        <p>Cutting-edge technologies and proof-of-concept implementations for learning and testing.</p>
+                        <ul class="project-list">
+                            <li><strong>ArgoCD GitOps</strong> - Declarative application delivery</li>
+                            <li><strong>Service Mesh</strong> - Istio/Linkerd experimentation</li>
+                            <li><strong>Chaos Engineering</strong> - Resilience testing frameworks</li>
+                            <li><strong>Multi-Cluster</strong> - Federation and cross-cluster communication</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🔧 Utilities & Scripts <span class="project-count">Multiple</span></h3>
+                        <p>Helper scripts, utilities, and automation tools that make Kubernetes management easier.</p>
+                        <ul class="project-list">
+                            <li><strong>Installation Scripts</strong> - Automated setup procedures</li>
+                            <li><strong>Backup Solutions</strong> - Persistent data protection</li>
+                            <li><strong>Health Checks</strong> - Cluster monitoring utilities</li>
+                            <li><strong>Debug Tools</strong> - Troubleshooting and diagnostics</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="k8s-terminal">
+                    <div class="k8s-header">
+                        <div class="k8s-buttons">
+                            <div class="k8s-button close"></div>
+                            <div class="k8s-button minimize"></div>
+                            <div class="k8s-button maximize"></div>
+                        </div>
+                        <div class="k8s-title">Latest Deployment Showcase</div>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">get deployments --all-namespaces</span>
+                        <span class="output success">20+ applications running</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">top pods</span>
+                        <span class="output">NextCloud: 45m CPU, 128Mi RAM</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">get pv</span>
+                        <span class="output success">15 persistent volumes bound</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">get ingress</span>
+                        <span class="output">Multiple apps exposed via NGINX</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">argocd</span>
+                        <span class="command">app sync --all</span>
+                        <span class="output success">All applications synchronized</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>🎯 Project Philosophy</h4>
+                    <p>Each project serves a dual purpose: <strong>solving real problems</strong> and <strong>learning new concepts</strong>. I don't just deploy applications - I understand their architecture, optimize their performance, secure their communications, and monitor their health. Every deployment is a lesson in Kubernetes best practices.</p>
+                </div>
+            </div>
+
+            <!-- Tech Stack Tab -->
+            <div class="tab-content" id="stack">
+                <div class="tech-stack">
+                    <div class="tech-card">
+                        <h4>🏗️ Orchestration</h4>
+                        <p>Container orchestration and cluster management</p>
+                        <div class="tech-icons">
+                            <span class="tech-icon">K3s</span>
+                            <span class="tech-icon">kubectl</span>
+                            <span class="tech-icon">Helm</span>
+                            <span class="upcoming-icon">K8s 1.29</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-card">
+                        <h4>🚀 GitOps & CD</h4>
+                        <p>Continuous delivery and declarative deployments</p>
+                        <div class="tech-icons">
+                            <span class="tech-icon">ArgoCD</span>
+                            <span class="tech-icon">Skaffold</span>
+                            <span class="upcoming-icon">FluxCD</span>
+                            <span class="upcoming-icon">Tekton</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-card">
+                        <h4>🌐 Networking</h4>
+                        <p>Load balancing, ingress, and service mesh</p>
+                        <div class="tech-icons">
+                            <span class="tech-icon">MetalLB</span>
+                            <span class="tech-icon">NGINX Ingress</span>
+                            <span class="upcoming-icon">Istio</span>
+                            <span class="upcoming-icon">Linkerd</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-card">
+                        <h4>📊 Monitoring</h4>
+                        <p>Observability, metrics, and alerting</p>
+                        <div class="tech-icons">
+                            <span class="tech-icon">Prometheus</span>
+                            <span class="tech-icon">Grafana</span>
+                            <span class="tech-icon">AlertManager</span>
+                            <span class="upcoming-icon">Jaeger</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-card">
+                        <h4>💾 Storage</h4>
+                        <p>Persistent storage and data management</p>
+                        <div class="tech-icons">
+                            <span class="tech-icon">Local PV</span>
+                            <span class="tech-icon">NFS</span>
+                            <span class="upcoming-icon">Longhorn</span>
+                            <span class="upcoming-icon">Rook-Ceph</span>
+                        </div>
+                    </div>
+
+                    <div class="tech-card">
+                        <h4>🔐 Security</h4>
+                        <p>Authentication, authorization, and policy enforcement</p>
+                        <div class="tech-icons">
+                            <span class="tech-icon">RBAC</span>
+                            <span class="upcoming-icon">OPA Gatekeeper</span>
+                            <span class="upcoming-icon">Falco</span>
+                            <span class="upcoming-icon">Vault</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="k8s-terminal">
+                    <div class="k8s-header">
+                        <div class="k8s-buttons">
+                            <div class="k8s-button close"></div>
+                            <div class="k8s-button minimize"></div>
+                            <div class="k8s-button maximize"></div>
+                        </div>
+                        <div class="k8s-title">Cluster Information</div>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">version --short</span>
+                        <span class="output success">Client: v1.28.4, Server: v1.28.4+k3s1</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">get nodes -o wide</span>
+                        <span class="output">3 nodes ready, K3s cluster</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">kubectl</span>
+                        <span class="command">get namespaces</span>
+                        <span class="output">monitoring, argocd, apps, ingress-nginx</span>
+                    </div>
+                    <div class="k8s-line">
+                        <span class="prompt">helm</span>
+                        <span class="command">list --all-namespaces</span>
+                        <span class="output success">15 Helm releases deployed</span>
+                    </div>
+                </div>
+
+                <div class="learning-box">
+                    <h4>🎓 Technology Selection Criteria</h4>
+                    <p>Every tool in my stack is chosen for <span class="highlight">learning value</span> and <span class="highlight">real-world applicability</span>. I prioritize cloud-native technologies that are widely adopted in production environments, ensuring my skills remain relevant and transferable.</p>
+                </div>
+
+                <div class="info-box">
+                    <h4>🔄 Continuous Evolution</h4>
+                    <p>My tech stack evolves with the Kubernetes ecosystem. As new technologies mature and become production-ready, I integrate them into my learning environment. The "upcoming" tools represent my next learning targets based on industry trends and community adoption.</p>
+                </div>
+            </div>
+
+            <!-- Experiments Tab -->
+            <div class="tab-content" id="experiments">
+                <div class="project-grid">
+                    <div class="project-category">
+                        <h3>🧪 Current Experiments</h3>
+                        <p>Active research and testing of cutting-edge Kubernetes technologies.</p>
+                        <ul class="project-list">
+                            <li><strong>ArgoCD ApplicationSets</strong> - Multi-cluster app management</li>
+                            <li><strong>Crossplane</strong> - Infrastructure as Code via K8s APIs</li>
+                            <li><strong>Cilium CNI</strong> - eBPF-based networking and security</li>
+                            <li><strong>Knative</strong> - Serverless workloads on Kubernetes</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🔬 Proof of Concepts</h3>
+                        <p>Small-scale implementations to validate concepts before full deployment.</p>
+                        <ul class="project-list">
+                            <li><strong>Multi-tenancy</strong> - Namespace isolation strategies</li>
+                            <li><strong>Disaster Recovery</strong> - Backup and restore procedures</li>
+                            <li><strong>Auto-scaling</strong> - HPA and VPA configurations</li>
+                            <li><strong>Cost Optimization</strong> - Resource efficiency testing</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>💡 Future Explorations</h3>
+                        <p>Technologies on my roadmap for upcoming learning phases.</p>
+                        <ul class="project-list">
+                            <li><strong>WebAssembly</strong> - WASM workloads in Kubernetes</li>
+                            <li><strong>Edge Computing</strong> - K3s at the edge</li>
+                            <li><strong>ML Workflows</strong> - Kubeflow and ML pipelines</li>
+                            <li><strong>Blockchain</strong> - Distributed ledger applications</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    # Example experiment workflow<br>
+                    apply -f experiment-namespace.yaml<br>
+                    apply -f test-deployment.yaml<br>
+                    get pods -w # Watch for behavior<br>
+                    logs -f deployment/test-app<br>
+                    describe pod # Analyze results
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+
+                <div class="learning-box">
+                    <h4>🔬 Experimental Methodology</h4>
+                    <p>Every experiment follows a structured approach: <strong>hypothesis → implementation → testing → documentation → lessons learned</strong>. I maintain detailed notes about what works, what doesn't, and why. Failed experiments are just as valuable as successful ones!</p>
+                </div>
+
+                <div class="info-box">
+                    <h4>⚠️ Homelab Testing Ground</h4>
+                    <p>My homelab serves as a safe space for breaking things. I can test destructive operations, security exploits, and experimental configurations without fear. If something goes wrong, it's a learning opportunity, not a production incident!</p>
+                </div>
+            </div>
+
+            <!-- Resources Tab -->
+            <div class="tab-content" id="resources">
+                <div class="project-grid">
+                    <div class="project-category">
+                        <h3>📚 Learning Materials</h3>
+                        <p>Curated resources that have shaped my Kubernetes understanding.</p>
+                        <ul class="project-list">
+                            <li><strong>Kubernetes Documentation</strong> - Official reference and tutorials</li>
+                            <li><strong>CNCF Landscape</strong> - Cloud-native technology overview</li>
+                            <li><strong>Kubernetes the Hard Way</strong> - Deep cluster understanding</li>
+                            <li><strong>Production Kubernetes</strong> - Best practices guide</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🛠️ Essential Tools</h3>
+                        <p>Command-line tools and utilities that make K8s management efficient.</p>
+                        <ul class="project-list">
+                            <li><strong>kubectx/kubens</strong> - Context and namespace switching</li>
+                            <li><strong>k9s</strong> - Terminal-based cluster management</li>
+                            <li><strong>lens</strong> - Visual cluster inspection</li>
+                            <li><strong>stern</strong> - Multi-pod log tailing</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-category">
+                        <h3>🌐 Community Resources</h3>
+                        <p>Online communities and platforms for continuous learning.</p>
+                        <ul class="project-list">
+                            <li><strong>r/kubernetes</strong> - Reddit community discussions</li>
+                            <li><strong>CNCF Slack</strong> - Real-time community support</li>
+                            <li><strong>KubeCon Talks</strong> - Conference presentations</li>
+                            <li><strong>Kubernetes Blog</strong> - Official updates and guides</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="wiki-box">
+                    <h4>📖 Personal Wiki & Documentation</h4>
+                    <p>My comprehensive knowledge base at <strong><a href="https://read.helixx.cloud/" style="color: #87ceeb; text-decoration: none;">read.helixx.cloud</a></strong> contains:</p>
+                    <ul class="project-list" style="margin-top: 15px;">
+                        <li><strong>Detailed Installation Guides</strong> - Step-by-step procedures</li>
+                        <li><strong>Troubleshooting Playbooks</strong> - Common issues and solutions</li>
+                        <li><strong>Architecture Diagrams</strong> - Visual system representations</li>
+                        <li><strong>Lessons Learned</strong> - Insights from failed experiments</li>
+                        <li><strong>Best Practices</strong> - Production-ready patterns</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h4>🔗 Useful Commands</h4>
+                    <div class="code-block">
+                        # Quick cluster overview<br>
+                        get all --all-namespaces<br><br>
+                        # Resource consumption<br>
+                        top nodes && kubectl top pods<br><br>
+                        # Debug networking<br>
+                        run debug --image=nicolaka/netshoot -it --rm
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                </div>
+
+                <div class="learning-box">
+                    <h4>🎯 Continuous Learning Goals</h4>
+                    <p>My learning never stops. Current focus areas include <span class="highlight">GitOps at scale</span>, <span class="highlight">advanced networking</span>, and <span class="highlight">platform engineering</span>. Each project in this repository builds toward these larger objectives while solving immediate practical problems.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.textContent.replace('Copy', '').replace(/^kubectl /, '').trim();
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.style.background = '#326ce5';
+                button.style.color = '#ffffff';
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.style.background = '#1f2937';
+                    button.style.color = '#9ca3af';
+                }, 2000);
+            });
+        }
+
+        // Add interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.project-category, .tech-card, .journey-milestone');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    if (this.classList.contains('journey-milestone')) {
+                        this.style.transform = 'translateX(8px)';
+                    } else {
+                        this.style.transform = 'translateY(-12px) scale(1.02)';
+                    }
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'none';
+                });
+            });
+
+            // Animate journey badges
+            const badges = document.querySelectorAll('.journey-badge');
+            badges.forEach((badge, index) => {
+                badge.style.animationDelay = `${index * 0.5}s`;
+            });
+        });
+    </script>
+</body>
+</html>
