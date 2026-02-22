@@ -1,13 +1,13 @@
 # Shiori Bookmark Manager Deployment on Kubernetes
 * * *
 
-## 📋 **Overview**
+## **Overview**
 
 Shiori is a simple, self-hosted bookmark manager that is designed to be minimal and fast. This guide explains how to deploy Shiori on a Kubernetes cluster using a Persistent Volume (PV) for data storage and MetalLB for load balancing.
 
 * * *
 
-## 🚀 **Deployment Components**
+## **Deployment Components**
 
 ### 1️⃣ **Deployment Configuration (`Deployment.yaml`)**
 
@@ -31,14 +31,14 @@ Defines the service to expose Shiori externally:
 
 Handles persistent data storage:
 
-#### 📦 Persistent Volume (`bookmark-pv`)
+#### Persistent Volume (`bookmark-pv`)
 
 - **Capacity:** `5Gi`
 - **Access Mode:** `ReadWriteOnce`
 - **Reclaim Policy:** `Retain` (data is preserved even if the PVC is deleted).
 - **Host Path:** Data is stored on the node at `/home/k8server/bookmark_manager`.
 
-#### 📥 Persistent Volume Claim (`bookmark-pvc`)
+#### Persistent Volume Claim (`bookmark-pvc`)
 
 - **Access Mode:** `ReadWriteOnce`
 - **Requests:** `5Gi` of storage.
@@ -47,16 +47,16 @@ Handles persistent data storage:
 
 * * *
 
-## 🗄 **Storage Details**
+## **Storage Details**
 
-### 📂 **Data Directory on Host**
+### **Data Directory on Host**
 
 - **Path:** `/home/k8server/bookmark_manager`
 - **Persistence:**
     - Data remains intact even if the pod or PVC is deleted (due to `Retain` policy).
     - Ensure proper permissions (`chown -R 1000:1000` and `chmod -R 755`) to avoid permission issues.
 
-### 🔐 **Reclaim Policy Explained**
+### **Reclaim Policy Explained**
 
 - **Retain:**
     - Keeps data safe even after PVC deletion.
@@ -64,7 +64,7 @@ Handles persistent data storage:
 
 * * *
 
-## ⚡ **Deployment Instructions**
+## **Deployment Instructions**
 
 ### 1️⃣ Apply the Configuration Files
 
@@ -94,7 +94,7 @@ kubectl get pv,pvc -n bookmark
 
 * * *
 
-## 📲 **Access from Other Devices**
+## **Access from Other Devices**
 
 1.  Ensure the MetalLB-assigned IP is accessible from your network.
 2.  Use `http://<MetalLB-IP>` on any device connected to the same network.
@@ -104,14 +104,14 @@ kubectl get pv,pvc -n bookmark
 
 * * *
 
-## 📤 **Import Bookmarks from Firefox**
+## **Import Bookmarks from Firefox**
 
 1.  **Export from Firefox:** `Bookmarks Library → Export to HTML`.
 2.  **Import into Shiori:** `Settings → Import Bookmarks`.
 
 * * *
 
-## 🔒 **Security Considerations**
+## **Security Considerations**
 
 - Always set a strong `SHIORI_HTTP_SECRET_KEY`.
 - Secure access via HTTPS using Ingress or NGINX.
@@ -119,7 +119,7 @@ kubectl get pv,pvc -n bookmark
 
 * * *
 
-## 💾 **Backup Strategy**
+## **Backup Strategy**
 
 1.  Regularly back up `/home/k8server/bookmark_manager`.
 2.  Use `rsync` or scheduled cron jobs.
@@ -127,7 +127,7 @@ kubectl get pv,pvc -n bookmark
 
 * * *
 
-## 🛠 **Troubleshooting Tips**
+## **Troubleshooting Tips**
 
 - **PVC Pending:** Check PV binding and permissions.
 - **Pod CrashLoopBackOff:** Verify environment variables and logs.
@@ -137,4 +137,4 @@ kubectl get pv,pvc -n bookmark
 
 * * *
 
-### 🚀 Enjoy managing your bookmarks with Shiori on Kubernetes! 🚀
+### Enjoy managing your bookmarks with Shiori on Kubernetes!
