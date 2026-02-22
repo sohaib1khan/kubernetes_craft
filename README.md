@@ -4,9 +4,9 @@
 
 [![Kubernetes Craft Interactive Documentation](https://img.shields.io/badge/☸️_INTERACTIVE-DOCUMENTATION-326ce5?style=for-the-badge&labelColor=1a1a2e&color=4285f4&logoColor=white)](https://sohaib1khan.github.io/kubernetes_craft/)
 
-**🎯 Learning Journey | 🚀 20+ Projects | 🔬 Live Experiments | 📖 Personal Wiki**
+**Learning Journey | 20+ Projects |  Live Experiments | Personal Wiki**
 
-*📚 Continuous Learning • ⚡ Real Applications • 🔄 Always Growing*
+*Continuous Learning • Real Applications •  Always Growing*
 
 ---
 
